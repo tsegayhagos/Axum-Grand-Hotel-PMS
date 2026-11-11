@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Reservation Tree View -->
+    <record id="view_hotel_reservation_tree" model="ir.ui.view">
+        <field name="name">hotel.reservation.list</field>
+        <field name="model">hotel.reservation</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state in ('cancel', 'no_show')"
+                  decoration-info="state == 'confirmed'"
+                  decoration-primary="state == 'checkin'"
+                  decoration-success="state == 'checkout'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="room_type_id"/>
+                <field name="room_id"/>
+                <field name="checkin_date"/>
+                <field name="checkout_date"/>
+                <field name="nights"/>
+                <field name="channel"/>
+                <field name="total_amount"/>
+                <field name="folio_balance" decoration-danger="folio_balance &gt; 0"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Reservation Calendar View -->
+    <record id="view_hotel_reservation_calendar" model="ir.ui.view">
+        <field name="name">hotel.reservation.calendar</field>
+        <field name="model">hotel.reservation</field>
+        <field name="arch" type="xml">
+            <calendar string="Hotel Reservations Rack"
+                      date_start="checkin_date"
+                      date_stop="checkout_date"
+                      color="state"
+                      mode="month">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="room_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Reservation Form View -->
+    <record id="view_hotel_reservation_form" model="ir.ui.view">
+        <field name="name">hotel.reservation.form</field>
+        <field name="model">hotel.reservation</field>
+        <field name="arch" type="xml">
+            <form string="Hotel Reservation">
+                <header>
+                    <button name="action_confirm" string="Confirm Booking" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_checkin" string="Direct Check-In" type="object" class="btn-success" invisible="state != 'confirmed'"/>
+                    <button name="%(action_hotel_checkin_wizard)d" string="Check-In Wizard" type="action" class="btn-outline-success" invisible="state != 'confirmed'"/>
+                    <button name="%(action_hotel_checkout_wizard)d" string="Check-Out &amp; Settle" type="action" class="btn-info" invisible="state != 'checkin'"/>
+                    <button name="action_cancel" string="Cancel Booking" type="object" invisible="state not in ('draft', 'confirmed')"/>
+                    <button name="action_no_show" string="Mark No-Show" type="object" invisible="state != 'confirmed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,checkin,checkout"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_folio" type="object" class="oe_stat_button" icon="fa-file-text-o" invisible="not folio_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Master Folio</span>
+                                <span class="o_stat_value"><field name="folio_balance" widget="monetary"/></span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" string="Booking Reference"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Guest &amp; Channel">
+                            <field name="partner_id" widget="res_partner_many2one" context="{'default_is_hotel_guest': True}"/>
+                            <field name="channel"/>
+                            <field name="external_booking_ref" invisible="channel in ('walk_in', 'direct_web', 'phone')"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Stay Duration &amp; Guests">
+                            <field name="checkin_date"/>
+                            <field name="checkout_date"/>
+                            <field name="nights"/>
+                            <div class="d-flex align-items-center">
+                                <label for="adults" string="Occupants" class="me-2"/>
+                                <field name="adults" class="me-2" style="width: 50px;"/> Adults, 
+                                <field name="children" class="mx-2" style="width: 50px;"/> Children
+                            </div>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Room &amp; Rate Allocation">
+                            <field name="room_type_id"/>
+                            <field name="room_id" domain="[('room_type_id', '=', room_type_id), ('status', 'in', ('available', 'clean', 'inspected', 'reserved'))]"/>
+                            <field name="rate_plan_id"/>
+                            <field name="meal_plan_id"/>
+                            <field name="nightly_rate"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Financial Breakdown">
+                            <field name="room_subtotal"/>
+                            <field name="extras_subtotal"/>
+                            <field name="total_amount" class="oe_subtotal_footer_separator font-weight-bold"/>
+                            <field name="folio_balance" decoration-danger="folio_balance &gt; 0"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Special Requests &amp; Guest Preferences">
+                            <field name="special_requests" placeholder="Add early check-in request, airport pickup details, extra bed, etc..."/>
+                        </page>
+                        <page string="Laundry Orders" invisible="not laundry_order_ids">
+                            <field name="laundry_order_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="order_date"/>
+                                    <field name="total_pieces"/>
+                                    <field name="total_amount"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Housekeeping &amp; Room Tasks" invisible="not housekeeping_task_ids">
+                            <field name="housekeeping_task_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="task_type"/>
+                                    <field name="attendant_id"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Reservation Search Filter -->
+    <record id="view_hotel_reservation_search" model="ir.ui.view">
+        <field name="name">hotel.reservation.search</field>
+        <field name="model">hotel.reservation</field>
+        <field name="arch" type="xml">
+            <search string="Search Reservations">
+                <field name="name" string="Reference"/>
+                <field name="partner_id" string="Guest"/>
+                <field name="room_id" string="Room Number"/>
+                <filter name="in_house" string="In-House (Checked In)" domain="[('state', '=', 'checkin')]"/>
+                <filter name="confirmed" string="Confirmed Bookings" domain="[('state', '=', 'confirmed')]"/>
+                <filter name="draft" string="Inquiries / Draft" domain="[('state', '=', 'draft')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_room_type" string="Room Type" context="{'group_by': 'room_type_id'}"/>
+                    <filter name="group_channel" string="Booking Source" context="{'group_by': 'channel'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action & Menus -->
+    <record id="action_hotel_reservation" model="ir.actions.act_window">
+        <field name="name">Reservations</field>
+        <field name="res_model">hotel.reservation</field>
+        <field name="view_mode">list,calendar,form</field>
+        <field name="search_view_id" ref="view_hotel_reservation_search"/>
+    </record>
+
+    <record id="action_hotel_inhouse_guests" model="ir.actions.act_window">
+        <field name="name">In-House Guests</field>
+        <field name="res_model">hotel.reservation</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'checkin')]</field>
+    </record>
+
+    <menuitem id="menu_hotel_reservation_action"
+              name="All Reservations"
+              parent="menu_hotel_frontdesk"
+              action="action_hotel_reservation"
+              sequence="10"/>
+
+    <menuitem id="menu_hotel_inhouse_action"
+              name="In-House Guests"
+              parent="menu_hotel_frontdesk"
+              action="action_hotel_inhouse_guests"
+              sequence="20"/>
+</odoo>

@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Room Kanban View -->
+    <record id="view_hotel_room_kanban" model="ir.ui.view">
+        <field name="name">hotel.room.kanban</field>
+        <field name="model">hotel.room</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="floor_id" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="room_type_id"/>
+                <field name="status"/>
+                <field name="status_color"/>
+                <field name="current_guest_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click p-3 shadow-sm rounded border-start border-4"
+                             t-attf-style="border-left-color: #{record.status_color.raw_value} !important;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4 class="mb-0 font-weight-bold text-primary">
+                                    Room <field name="name"/>
+                                </h4>
+                                <span class="badge rounded-pill px-2 py-1 text-white"
+                                      t-attf-style="background-color: #{record.status_color.raw_value};">
+                                    <field name="status"/>
+                                </span>
+                            </div>
+                            <div class="text-muted small mb-1">
+                                <i class="fa fa-bed me-1"/> <field name="room_type_id"/>
+                            </div>
+                            <t t-if="record.current_guest_id.raw_value">
+                                <div class="alert alert-primary py-1 px-2 mb-2 small">
+                                    <i class="fa fa-user me-1"/> <strong><field name="current_guest_id"/></strong>
+                                </div>
+                            </t>
+                            <div class="mt-2 pt-2 border-top d-flex justify-content-between">
+                                <button name="action_set_clean" type="object" string="Clean" class="btn btn-sm btn-outline-info py-0 px-2" invisible="status in ('clean', 'occupied')">
+                                    Clean
+                                </button>
+                                <button name="action_set_inspected" type="object" string="Inspect" class="btn btn-sm btn-outline-success py-0 px-2" invisible="status != 'clean'">
+                                    Inspect
+                                </button>
+                                <button name="action_set_dirty" type="object" string="Dirty" class="btn btn-sm btn-outline-danger py-0 px-2" invisible="status == 'dirty'">
+                                    Dirty
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Room Tree / List View -->
+    <record id="view_hotel_room_tree" model="ir.ui.view">
+        <field name="name">hotel.room.list</field>
+        <field name="model">hotel.room</field>
+        <field name="arch" type="xml">
+            <list decoration-success="status in ('available', 'inspected')"
+                  decoration-danger="status == 'dirty'"
+                  decoration-warning="status in ('maintenance', 'out_of_service')"
+                  decoration-info="status == 'occupied'">
+                <field name="name"/>
+                <field name="room_type_id"/>
+                <field name="floor_id"/>
+                <field name="building_id"/>
+                <field name="status" widget="badge"/>
+                <field name="current_guest_id"/>
+                <field name="telephone_ext"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Room Form View -->
+    <record id="view_hotel_room_form" model="ir.ui.view">
+        <field name="name">hotel.room.form</field>
+        <field name="model">hotel.room</field>
+        <field name="arch" type="xml">
+            <form string="Hotel Physical Room">
+                <header>
+                    <button name="action_set_clean" string="Mark Clean" type="object" class="btn-info" invisible="status in ('clean', 'occupied')"/>
+                    <button name="action_set_inspected" string="Mark Inspected / Ready" type="object" class="btn-success" invisible="status != 'clean'"/>
+                    <button name="action_set_dirty" string="Mark Dirty" type="object" class="btn-warning" invisible="status == 'dirty'"/>
+                    <button name="action_set_maintenance" string="Send to Maintenance" type="object" class="btn-danger" invisible="status == 'maintenance'"/>
+                    <button name="action_set_available" string="Make Available" type="object" class="btn-secondary" invisible="status == 'available'"/>
+                    <field name="status" widget="statusbar" statusbar_visible="available,reserved,occupied,dirty,clean,inspected"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Room Number"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. 101, 204, Suite A"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Location &amp; Type">
+                            <field name="room_type_id"/>
+                            <field name="floor_id"/>
+                            <field name="building_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Hardware &amp; Telecom">
+                            <field name="keycard_code"/>
+                            <field name="telephone_ext"/>
+                            <field name="current_reservation_id" readonly="1" invisible="not current_reservation_id"/>
+                            <field name="current_guest_id" readonly="1" invisible="not current_guest_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Room Notes &amp; Features">
+                            <field name="notes" placeholder="Add specific room features, view descriptions, connecting room details..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Room Type Form & Tree -->
+    <record id="view_hotel_room_type_tree" model="ir.ui.view">
+        <field name="name">hotel.room.type.list</field>
+        <field name="model">hotel.room.type</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="bed_type"/>
+                <field name="base_price"/>
+                <field name="total_rooms"/>
+                <field name="available_rooms"/>
+                <field name="occupied_rooms"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hotel_room_type_form" model="ir.ui.view">
+        <field name="name">hotel.room.type.form</field>
+        <field name="model">hotel.room.type</field>
+        <field name="arch" type="xml">
+            <form string="Room Type Configuration">
+                <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name" string="Category Name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Executive Deluxe King"/>
+                        </h1>
+                        <h3>
+                            <field name="code" placeholder="CODE"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Capacity &amp; Layout">
+                            <field name="max_adults"/>
+                            <field name="max_children"/>
+                            <field name="max_occupancy"/>
+                            <field name="bed_type"/>
+                            <field name="room_size_sqm"/>
+                        </group>
+                        <group string="Nightly Standard Rates">
+                            <field name="base_price"/>
+                            <field name="extra_adult_price"/>
+                            <field name="extra_child_price"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Amenities">
+                            <field name="amenity_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="Description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Assigned Physical Rooms">
+                            <field name="room_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="floor_id"/>
+                                    <field name="status" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Rate Plan Form & Tree -->
+    <record id="view_hotel_rate_plan_tree" model="ir.ui.view">
+        <field name="name">hotel.rate.plan.list</field>
+        <field name="model">hotel.rate.plan</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="plan_type"/>
+                <field name="meal_plan_id"/>
+                <field name="pricing_type"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hotel_rate_plan_form" model="ir.ui.view">
+        <field name="name">hotel.rate.plan.form</field>
+        <field name="model">hotel.rate.plan</field>
+        <field name="arch" type="xml">
+            <form string="Rate Plan">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Rate Plan Name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Best Available Rate (BAR)"/>
+                        </h1>
+                        <h3>
+                            <field name="code" placeholder="BAR"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Plan Details">
+                            <field name="plan_type"/>
+                            <field name="meal_plan_id"/>
+                            <field name="active"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Pricing Calculation">
+                            <field name="pricing_type"/>
+                            <field name="discount_percent" invisible="pricing_type != 'percent_discount'"/>
+                            <field name="surcharge_percent" invisible="pricing_type != 'percent_surcharge'"/>
+                            <field name="fixed_override_price" invisible="pricing_type != 'fixed'"/>
+                        </group>
+                    </group>
+                    <group string="Stay Restrictions">
+                        <group>
+                            <field name="min_stay_nights"/>
+                            <field name="max_stay_nights"/>
+                        </group>
+                        <group>
+                            <field name="closed_to_arrival"/>
+                            <field name="closed_to_departure"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Policy &amp; Terms">
+                            <field name="cancellation_policy" placeholder="Terms of cancellation, deposits, and refunds..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions & Menuitems -->
+    <record id="action_hotel_room" model="ir.actions.act_window">
+        <field name="name">Rooms Rack &amp; Inventory</field>
+        <field name="res_model">hotel.room</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register physical hotel rooms and monitor their live statuses!
+            </p>
+        </field>
+    </record>
+
+    <record id="action_hotel_room_type" model="ir.actions.act_window">
+        <field name="name">Room Types &amp; Categories</field>
+        <field name="res_model">hotel.room.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_hotel_rate_plan" model="ir.actions.act_window">
+        <field name="name">Rate Plans &amp; Pricing</field>
+        <field name="res_model">hotel.rate.plan</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_hotel_room_amenity" model="ir.actions.act_window">
+        <field name="name">Room Amenities</field>
+        <field name="res_model">hotel.room.amenity</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_hotel_building_floor" model="ir.actions.act_window">
+        <field name="name">Floors &amp; Wings</field>
+        <field name="res_model">hotel.floor</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Sub-menus under Rooms & Inventory -->
+    <menuitem id="menu_hotel_room_action"
+              name="All Rooms (Rack View)"
+              parent="menu_hotel_rooms"
+              action="action_hotel_room"
+              sequence="10"/>
+
+    <menuitem id="menu_hotel_room_type_action"
+              name="Room Types"
+              parent="menu_hotel_rooms"
+              action="action_hotel_room_type"
+              sequence="20"/>
+
+    <menuitem id="menu_hotel_rate_plan_action"
+              name="Rate Plans"
+              parent="menu_hotel_rooms"
+              action="action_hotel_rate_plan"
+              sequence="30"/>
+
+    <menuitem id="menu_hotel_amenity_action"
+              name="Amenities"
+              parent="menu_hotel_rooms"
+              action="action_hotel_room_amenity"
+              sequence="40"/>
+
+    <menuitem id="menu_hotel_floor_action"
+              name="Floors &amp; Buildings"
+              parent="menu_hotel_rooms"
+              action="action_hotel_building_floor"
+              sequence="50"/>
+</odoo>

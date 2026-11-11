@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Night Audit Tree View -->
+    <record id="view_hotel_night_audit_tree" model="ir.ui.view">
+        <field name="name">hotel.night.audit.list</field>
+        <field name="model">hotel.night.audit</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'completed'"
+                  decoration-warning="state == 'in_progress'"
+                  decoration-danger="state == 'failed'">
+                <field name="name"/>
+                <field name="audit_date"/>
+                <field name="next_business_date"/>
+                <field name="auditor_id"/>
+                <field name="occupancy_rate"/>
+                <field name="daily_room_revenue"/>
+                <field name="daily_total_revenue"/>
+                <field name="daily_payments_received"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Night Audit Form View -->
+    <record id="view_hotel_night_audit_form" model="ir.ui.view">
+        <field name="name">hotel.night.audit.form</field>
+        <field name="model">hotel.night.audit</field>
+        <field name="arch" type="xml">
+            <form string="Night Audit &amp; Daily Financial Balancing">
+                <header>
+                    <button name="action_verify_discrepancies" string="Re-Check Discrepancies" type="object" class="btn-info" invisible="state == 'completed'"/>
+                    <button name="action_execute_night_audit" string="Finalize Audit &amp; Rollover Day" type="object" class="btn-primary" invisible="state == 'completed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Audit Session"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Audit Parameters">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="audit_date"/>
+                            <field name="next_business_date"/>
+                            <field name="auditor_id"/>
+                        </group>
+                        <group string="Property Flash Stats">
+                            <field name="total_salable_rooms"/>
+                            <field name="occupied_rooms"/>
+                            <field name="occupancy_rate"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Arrivals Reconciliation">
+                            <field name="arrivals_expected"/>
+                            <field name="arrivals_actual"/>
+                            <field name="arrivals_pending" decoration-danger="arrivals_pending &gt; 0"/>
+                        </group>
+                        <group string="Departures Reconciliation">
+                            <field name="departures_expected"/>
+                            <field name="departures_actual"/>
+                            <field name="departures_pending" decoration-warning="departures_pending &gt; 0"/>
+                        </group>
+                    </group>
+                    <group string="Daily Gross Revenue Snapshot">
+                        <group>
+                            <field name="daily_room_revenue"/>
+                            <field name="daily_laundry_revenue"/>
+                            <field name="daily_minibar_revenue"/>
+                            <field name="daily_other_revenue"/>
+                        </group>
+                        <group>
+                            <field name="daily_total_revenue" class="oe_subtotal_footer_separator font-weight-bold"/>
+                            <field name="daily_payments_received" class="oe_subtotal_footer_separator text-success font-weight-bold"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Discrepancy &amp; Exceptions Log">
+                            <field name="discrepancy_log" readonly="1" style="font-family: monospace; white-space: pre-wrap;"/>
+                        </page>
+                        <page string="Auditor Sign-off Notes">
+                            <field name="audit_notes" placeholder="Notes on cash drawer discrepancies, delayed arrivals, manager sign-offs..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions & Menus -->
+    <record id="action_hotel_night_audit" model="ir.actions.act_window">
+        <field name="name">Night Audit Logs</field>
+        <field name="res_model">hotel.night.audit</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_hotel_night_audit_logs"
+              name="Night Audit Records"
+              parent="menu_hotel_billing_root"
+              action="action_hotel_night_audit"
+              sequence="30"/>
+
+    <menuitem id="menu_hotel_config_night_audit"
+              name="Execute Night Audit (Rollover)"
+              parent="menu_hotel_billing_root"
+              action="action_hotel_night_audit_wizard"
+              sequence="40"/>
+</odoo>

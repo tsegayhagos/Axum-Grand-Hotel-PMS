@@ -1,0 +1,4 @@
+# -*- coding: utf-8 -*-
+from . import hotel_checkin_wizard
+from . import hotel_checkout_wizard
+from . import hotel_night_audit_wizard

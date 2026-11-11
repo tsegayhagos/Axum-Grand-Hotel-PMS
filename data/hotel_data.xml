@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Sequences -->
+        <record id="seq_hotel_reservation" model="ir.sequence">
+            <field name="name">Hotel Reservation Sequence</field>
+            <field name="code">hotel.reservation</field>
+            <field name="prefix">RES/%(range_year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_hotel_folio" model="ir.sequence">
+            <field name="name">Hotel Folio Sequence</field>
+            <field name="code">hotel.folio</field>
+            <field name="prefix">FOL/%(range_year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_hotel_laundry_order" model="ir.sequence">
+            <field name="name">Hotel Laundry Order Sequence</field>
+            <field name="code">hotel.laundry.order</field>
+            <field name="prefix">LND/%(range_year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_hotel_housekeeping_task" model="ir.sequence">
+            <field name="name">Hotel Housekeeping Task Sequence</field>
+            <field name="code">hotel.housekeeping.task</field>
+            <field name="prefix">HK/%(range_year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_hotel_maintenance_request" model="ir.sequence">
+            <field name="name">Hotel Maintenance Request Sequence</field>
+            <field name="code">hotel.maintenance.request</field>
+            <field name="prefix">MNT/%(range_year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_hotel_night_audit" model="ir.sequence">
+            <field name="name">Hotel Night Audit Sequence</field>
+            <field name="code">hotel.night.audit</field>
+            <field name="prefix">NA/%(range_year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Meal Plans -->
+        <record id="meal_plan_ep" model="hotel.meal.plan">
+            <field name="name">European Plan (Room Only)</field>
+            <field name="code">EP</field>
+            <field name="price">0.0</field>
+            <field name="description">Room accommodation only; meals billed separately.</field>
+        </record>
+
+        <record id="meal_plan_cp" model="hotel.meal.plan">
+            <field name="name">Continental Plan (Bed &amp; Breakfast)</field>
+            <field name="code">CP</field>
+            <field name="price">18.0</field>
+            <field name="description">Includes daily international buffet breakfast.</field>
+        </record>
+
+        <record id="meal_plan_map" model="hotel.meal.plan">
+            <field name="name">Modified American Plan (Half Board)</field>
+            <field name="code">MAP</field>
+            <field name="price">40.0</field>
+            <field name="description">Includes breakfast plus dinner or lunch.</field>
+        </record>
+
+        <record id="meal_plan_ap" model="hotel.meal.plan">
+            <field name="name">American Plan (Full Board)</field>
+            <field name="code">AP</field>
+            <field name="price">65.0</field>
+            <field name="description">Includes breakfast, lunch, and dinner.</field>
+        </record>
+
+        <!-- Room Amenities -->
+        <record id="amenity_wifi" model="hotel.room.amenity">
+            <field name="name">High-Speed Wi-Fi (Gigabit)</field>
+            <field name="icon">fa-wifi</field>
+        </record>
+
+        <record id="amenity_tv" model="hotel.room.amenity">
+            <field name="name">55-inch 4K Smart TV with Streaming</field>
+            <field name="icon">fa-tv</field>
+        </record>
+
+        <record id="amenity_safe" model="hotel.room.amenity">
+            <field name="name">Electronic Laptop Safe</field>
+            <field name="icon">fa-lock</field>
+        </record>
+
+        <record id="amenity_minibar" model="hotel.room.amenity">
+            <field name="name">Stocked Silent Minibar</field>
+            <field name="icon">fa-glass</field>
+        </record>
+
+        <record id="amenity_jacuzzi" model="hotel.room.amenity">
+            <field name="name">Hydro-massage Jacuzzi Bath</field>
+            <field name="icon">fa-bath</field>
+        </record>
+
+        <record id="amenity_balcony" model="hotel.room.amenity">
+            <field name="name">Private Panoramic Balcony</field>
+            <field name="icon">fa-sun-o</field>
+        </record>
+
+        <!-- Default Laundry Catalog -->
+        <record id="laundry_gent_shirt" model="hotel.laundry.service">
+            <field name="name">Gentlemen Shirt (Wash &amp; Iron)</field>
+            <field name="category">gent</field>
+            <field name="service_type">wash_iron</field>
+            <field name="standard_price">8.0</field>
+        </record>
+
+        <record id="laundry_suit" model="hotel.laundry.service">
+            <field name="name">Two-Piece Business Suit (Dry Clean)</field>
+            <field name="category">gent</field>
+            <field name="service_type">dry_clean</field>
+            <field name="standard_price">22.0</field>
+        </record>
+
+        <record id="laundry_dress" model="hotel.laundry.service">
+            <field name="name">Evening Dress / Gown (Dry Clean)</field>
+            <field name="category">lady</field>
+            <field name="service_type">dry_clean</field>
+            <field name="standard_price">25.0</field>
+        </record>
+
+        <record id="laundry_press_trousers" model="hotel.laundry.service">
+            <field name="name">Trousers / Slacks (Pressing Only)</field>
+            <field name="category">gent</field>
+            <field name="service_type">press_only</field>
+            <field name="standard_price">6.0</field>
+        </record>
+
+        <!-- Default KPI Dashboard Record -->
+        <record id="default_hotel_kpi_dashboard" model="hotel.kpi.dashboard">
+            <field name="name">Hotel Performance Overview</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+    </data>
+</odoo>

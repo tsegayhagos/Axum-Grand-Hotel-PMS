@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Guest Folio PDF Report Action -->
+    <record id="action_report_hotel_folio" model="ir.actions.report">
+        <field name="name">Guest Folio &amp; Invoice</field>
+        <field name="model">hotel.folio</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hotel_pms.report_hotel_folio_template</field>
+        <field name="report_file">hotel_pms.report_hotel_folio_template</field>
+        <field name="print_report_name">'Guest_Folio_' + (object.name or 'Bill')</field>
+        <field name="binding_model_id" ref="model_hotel_folio"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Reservation Registration Card PDF -->
+    <record id="action_report_hotel_registration" model="ir.actions.report">
+        <field name="name">Guest Registration Card</field>
+        <field name="model">hotel.reservation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hotel_pms.report_hotel_folio_template</field>
+        <field name="report_file">hotel_pms.report_hotel_folio_template</field>
+        <field name="binding_model_id" ref="model_hotel_reservation"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

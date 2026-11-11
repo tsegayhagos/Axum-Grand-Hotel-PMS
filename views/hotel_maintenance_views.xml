@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Maintenance List View -->
+    <record id="view_hotel_maintenance_request_tree" model="ir.ui.view">
+        <field name="name">hotel.maintenance.request.list</field>
+        <field name="model">hotel.maintenance.request</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="priority in ('2', '3')"
+                  decoration-warning="priority == '1'"
+                  decoration-success="state == 'resolved'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="subject"/>
+                <field name="room_id"/>
+                <field name="category"/>
+                <field name="priority" widget="priority"/>
+                <field name="block_room" widget="boolean_toggle"/>
+                <field name="technician_id"/>
+                <field name="reported_date"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Maintenance Form View -->
+    <record id="view_hotel_maintenance_request_form" model="ir.ui.view">
+        <field name="name">hotel.maintenance.request.form</field>
+        <field name="model">hotel.maintenance.request</field>
+        <field name="arch" type="xml">
+            <form string="Engineering Maintenance Request">
+                <header>
+                    <button name="action_assign_technician" string="Assign Tech" type="object" class="btn-primary" invisible="state != 'reported'"/>
+                    <button name="action_start_repair" string="Start Work" type="object" class="btn-info" invisible="state != 'assigned'"/>
+                    <button name="action_mark_resolved" string="Resolve &amp; Release Room" type="object" class="btn-success" invisible="state != 'in_progress'"/>
+                    <button name="action_cancel" string="Cancel Ticket" type="object" invisible="state in ('resolved', 'cancelled')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="reported,assigned,in_progress,resolved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="subject" string="Issue Summary"/>
+                        <h1>
+                            <field name="subject" placeholder="e.g. AC leaking water / Keycard reader malfunction"/>
+                        </h1>
+                        <h3>
+                            <field name="name"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Location &amp; Defect">
+                            <field name="room_id"/>
+                            <field name="floor_id"/>
+                            <field name="category"/>
+                            <field name="priority" widget="priority"/>
+                            <field name="block_room"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Assignment &amp; Repair Details">
+                            <field name="technician_id"/>
+                            <field name="reported_by"/>
+                            <field name="reported_date"/>
+                            <field name="resolved_date" readonly="1" invisible="not resolved_date"/>
+                            <field name="repair_cost"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Defect Description">
+                            <field name="description" placeholder="Describe the physical failure, sound, error code..."/>
+                        </page>
+                        <page string="Technician Resolution Report">
+                            <field name="resolution_notes" placeholder="Parts replaced, pressure adjusted, wiring reconnected..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action & Menu -->
+    <record id="action_hotel_maintenance_request" model="ir.actions.act_window">
+        <field name="name">Maintenance Requests</field>
+        <field name="res_model">hotel.maintenance.request</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_hotel_maintenance_requests"
+              name="Work Orders &amp; Tickets"
+              parent="menu_hotel_housekeeping_root"
+              action="action_hotel_maintenance_request"
+              sequence="30"/>
+</odoo>

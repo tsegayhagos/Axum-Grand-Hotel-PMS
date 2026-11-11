@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Checkin Wizard Form -->
+    <record id="view_hotel_checkin_wizard_form" model="ir.ui.view">
+        <field name="name">hotel.checkin.wizard.form</field>
+        <field name="model">hotel.checkin.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Front Desk Quick Check-In">
+                <group>
+                    <group string="Guest &amp; Stay Information">
+                        <field name="reservation_id" readonly="1"/>
+                        <field name="partner_id"/>
+                        <field name="room_id" domain="[('status', 'in', ('available', 'clean', 'inspected'))]"/>
+                        <field name="keycard_code" placeholder="Scan or type Keycard / Room Passcard..."/>
+                    </group>
+                    <group string="Verification &amp; Security Deposit">
+                        <field name="id_verified"/>
+                        <field name="deposit_amount"/>
+                        <field name="payment_method" invisible="deposit_amount == 0"/>
+                    </group>
+                </group>
+                <group string="Front Desk Remarks">
+                    <field name="checkin_notes" nolabel="1" placeholder="Add any special guest preferences or arrival instructions..."/>
+                </group>
+                <footer>
+                    <button name="action_confirm_checkin" string="Complete Check-In &amp; Issue Room" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Checkout Wizard Form -->
+    <record id="view_hotel_checkout_wizard_form" model="ir.ui.view">
+        <field name="name">hotel.checkout.wizard.form</field>
+        <field name="model">hotel.checkout.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Front Desk Departure &amp; Settlement">
+                <group>
+                    <group string="Stay &amp; Folio Review">
+                        <field name="reservation_id" readonly="1"/>
+                        <field name="partner_id"/>
+                        <field name="room_id"/>
+                        <field name="total_charges"/>
+                        <field name="total_payments"/>
+                        <field name="balance_due" decoration-danger="balance_due &gt; 0" decoration-success="balance_due &lt;= 0"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                    <group string="Final Balance Settlement">
+                        <field name="settlement_payment_amount"/>
+                        <field name="payment_method" invisible="settlement_payment_amount &lt;= 0"/>
+                        <field name="payment_reference" invisible="settlement_payment_amount &lt;= 0" placeholder="Card auth / receipt no..."/>
+                        <field name="keycard_returned"/>
+                        <field name="minibar_settled"/>
+                    </group>
+                </group>
+                <group string="Guest Feedback">
+                    <field name="checkout_feedback" nolabel="1" placeholder="Guest comments on their stay..."/>
+                </group>
+                <footer>
+                    <button name="action_confirm_checkout" string="Settle Folio &amp; Check Out" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Night Audit Wizard Form -->
+    <record id="view_hotel_night_audit_wizard_form" model="ir.ui.view">
+        <field name="name">hotel.night.audit.wizard.form</field>
+        <field name="model">hotel.night.audit.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Execute Daily Night Audit">
+                <div class="alert alert-info" role="alert">
+                    The Night Audit reconciles daily front desk operations, balances guest folios, posts room charges and city taxes, checks for arrival no-shows / departure overstays, and rolls the business date forward.
+                </div>
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="audit_date"/>
+                    </group>
+                    <group>
+                        <field name="auto_post_room_charges"/>
+                        <field name="advance_date"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_start_audit" string="Begin Audit Verification" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions for Wizards -->
+    <record id="action_hotel_checkin_wizard" model="ir.actions.act_window">
+        <field name="name">Front Desk Quick Check-In</field>
+        <field name="res_model">hotel.checkin.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_hotel_checkout_wizard" model="ir.actions.act_window">
+        <field name="name">Front Desk Departure &amp; Settlement</field>
+        <field name="res_model">hotel.checkout.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Action for Night Audit Wizard -->
+    <record id="action_hotel_night_audit_wizard" model="ir.actions.act_window">
+        <field name="name">Run Daily Night Audit</field>
+        <field name="res_model">hotel.night.audit.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

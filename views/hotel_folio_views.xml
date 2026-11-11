@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Folio List View -->
+    <record id="view_hotel_folio_tree" model="ir.ui.view">
+        <field name="name">hotel.folio.list</field>
+        <field name="model">hotel.folio</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="balance_due &gt; 0"
+                  decoration-success="balance_due &lt;= 0"
+                  decoration-muted="state == 'closed'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="room_id"/>
+                <field name="total_room_charges"/>
+                <field name="total_extras_charges"/>
+                <field name="total_charges"/>
+                <field name="total_payments"/>
+                <field name="balance_due"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Folio Form View -->
+    <record id="view_hotel_folio_form" model="ir.ui.view">
+        <field name="name">hotel.folio.form</field>
+        <field name="model">hotel.folio</field>
+        <field name="arch" type="xml">
+            <form string="Guest Master Folio">
+                <header>
+                    <button name="action_register_payment_dialog" string="Register Payment" type="object" class="btn-primary" invisible="state != 'open'"/>
+                    <button name="action_create_invoice" string="Generate Customer Invoice" type="object" class="btn-info" invisible="invoice_id"/>
+                    <button name="action_close_folio" string="Close Folio" type="object" class="btn-success" invisible="state != 'open' or balance_due &gt; 0"/>
+                    <field name="state" widget="statusbar" statusbar_visible="open,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Folio Number"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Billing Contact &amp; Room">
+                            <field name="partner_id"/>
+                            <field name="room_id"/>
+                            <field name="reservation_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Accounting Link">
+                            <field name="invoice_id" readonly="1" invisible="not invoice_id"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Itemized Charges">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="date"/>
+                                    <field name="charge_type"/>
+                                    <field name="name"/>
+                                    <field name="quantity"/>
+                                    <field name="unit_price"/>
+                                    <field name="price_subtotal"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="total_room_charges"/>
+                                <field name="total_extras_charges"/>
+                                <field name="total_tax"/>
+                                <field name="total_charges" class="oe_subtotal_footer_separator font-weight-bold"/>
+                                <field name="total_payments"/>
+                                <field name="balance_due" class="oe_subtotal_footer_separator font-weight-bold"
+                                       decoration-danger="balance_due &gt; 0"
+                                       decoration-success="balance_due &lt;= 0"/>
+                            </group>
+                        </page>
+                        <page string="Payments &amp; Deposits">
+                            <field name="payment_ids">
+                                <list editable="bottom">
+                                    <field name="payment_date"/>
+                                    <field name="payment_method"/>
+                                    <field name="reference"/>
+                                    <field name="amount"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Folio Payment Form View -->
+    <record id="view_hotel_folio_payment_form" model="ir.ui.view">
+        <field name="name">hotel.folio.payment.form</field>
+        <field name="model">hotel.folio.payment</field>
+        <field name="arch" type="xml">
+            <form string="Register Payment">
+                <group>
+                    <group>
+                        <field name="folio_id" readonly="1"/>
+                        <field name="payment_date"/>
+                        <field name="amount"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="payment_method"/>
+                        <field name="reference" placeholder="Auth slip / bank receipt / transaction ID"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                </group>
+                <field name="notes" placeholder="Payment comments..."/>
+                <footer>
+                    <button name="action_post_payment" string="Record Payment" class="btn-primary" type="object"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action & Menus -->
+    <record id="action_hotel_folio" model="ir.actions.act_window">
+        <field name="name">Guest Master Folios</field>
+        <field name="res_model">hotel.folio</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_hotel_folio_payment" model="ir.actions.act_window">
+        <field name="name">Front Desk Payments &amp; Cashiering</field>
+        <field name="res_model">hotel.folio.payment</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_hotel_folios"
+              name="Guest Folios"
+              parent="menu_hotel_billing_root"
+              action="action_hotel_folio"
+              sequence="10"/>
+
+    <menuitem id="menu_hotel_payments"
+              name="Front Desk Cashier Till"
+              parent="menu_hotel_billing_root"
+              action="action_hotel_folio_payment"
+              sequence="20"/>
+</odoo>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Partner Form View Extension -->
+    <record id="view_partner_hotel_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.hotel.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Smart Buttons -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_guest_reservations" type="object" class="oe_stat_button" icon="fa-bed" invisible="not is_hotel_guest">
+                    <field name="reservation_count" widget="statinfo" string="Stays"/>
+                </button>
+                <button name="action_view_guest_folios" type="object" class="oe_stat_button" icon="fa-money" invisible="not is_hotel_guest">
+                    <field name="total_spent" widget="statinfo" string="Total Spent"/>
+                </button>
+            </xpath>
+
+            <!-- VIP Badge Header -->
+            <xpath expr="//h1" position="after">
+                <div class="mt-1" invisible="not is_hotel_guest">
+                    <field name="is_hotel_guest" invisible="1"/>
+                    <field name="vip_status" widget="badge"
+                           decoration-warning="vip_status in ('gold', 'vip')"
+                           decoration-info="vip_status == 'silver'"
+                           decoration-primary="vip_status == 'platinum'"/>
+                    <span class="badge bg-danger ms-2" invisible="not is_blacklisted">
+                        BLACKLISTED GUEST
+                    </span>
+                </div>
+            </xpath>
+
+            <!-- Hotel Tab in Notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Hotel Guest CRM &amp; Preferences" invisible="not is_hotel_guest">
+                    <group>
+                        <group string="Identity &amp; Passport">
+                            <field name="id_type"/>
+                            <field name="id_number"/>
+                            <field name="id_expiry_date"/>
+                            <field name="nationality_id"/>
+                            <field name="date_of_birth"/>
+                            <field name="gender"/>
+                        </group>
+                        <group string="Stay Preferences &amp; Allergies">
+                            <field name="bed_preference"/>
+                            <field name="floor_preference"/>
+                            <field name="smoking_preference"/>
+                            <field name="allergies"/>
+                            <field name="dietary_notes"/>
+                        </group>
+                    </group>
+                    <group string="Blacklist &amp; Security Protocol">
+                        <group>
+                            <field name="is_blacklisted"/>
+                            <field name="blacklist_reason" invisible="not is_blacklisted"/>
+                        </group>
+                        <group>
+                            <field name="last_stay_date"/>
+                        </group>
+                    </group>
+                    <group string="General Guest Remarks">
+                        <field name="guest_notes" nolabel="1" placeholder="Add personalized guest notes, beverage preferences, anniversary dates..."/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Guest Action & Menu -->
+    <record id="action_hotel_guest_crm" model="ir.actions.act_window">
+        <field name="name">Guest CRM &amp; Profiles</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('is_hotel_guest', '=', True)]</field>
+        <field name="context">{'default_is_hotel_guest': True}</field>
+    </record>
+
+    <menuitem id="menu_hotel_guest_action"
+              name="Guest CRM Profiles"
+              parent="menu_hotel_frontdesk"
+              action="action_hotel_guest_crm"
+              sequence="30"/>
+</odoo>

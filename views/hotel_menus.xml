@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top-level Menu -->
+    <menuitem id="menu_hotel_root"
+              name="Axum Grand Hotel"
+              web_icon="hotel_pms,static/description/icon.png"
+              action="action_hotel_reservation"
+              sequence="10"/>
+
+    <!-- 01. Auth, Multi-Tenancy & RBAC -->
+    <menuitem id="menu_hotel_auth_root"
+              name="01. Auth, Multi-Tenancy &amp; RBAC"
+              parent="menu_hotel_root"
+              sequence="10"
+              groups="group_hotel_manager"/>
+
+    <!-- 02. Property, Rooms & Rates -->
+    <menuitem id="menu_hotel_rooms"
+              name="02. Property, Rooms &amp; Rates"
+              parent="menu_hotel_root"
+              sequence="20"/>
+
+    <!-- 03. Guest CRM & Front Desk -->
+    <menuitem id="menu_hotel_frontdesk"
+              name="03. Guest CRM &amp; Front Desk"
+              parent="menu_hotel_root"
+              sequence="30"/>
+
+    <!-- 04. Laundry & Valet Service -->
+    <menuitem id="menu_hotel_laundry_root"
+              name="04. Laundry &amp; Valet Service"
+              parent="menu_hotel_root"
+              sequence="40"/>
+
+    <!-- 05. Housekeeping & Maintenance -->
+    <menuitem id="menu_hotel_housekeeping_root"
+              name="05. Housekeeping &amp; Maintenance"
+              parent="menu_hotel_root"
+              sequence="50"/>
+
+    <!-- 06. Billing, Folios & Night Audit -->
+    <menuitem id="menu_hotel_billing_root"
+              name="06. Billing, Folios &amp; Night Audit"
+              parent="menu_hotel_root"
+              sequence="60"/>
+
+    <!-- 07. Reporting & Analytics -->
+    <menuitem id="menu_hotel_reporting_root"
+              name="07. Reporting &amp; Analytics"
+              parent="menu_hotel_root"
+              sequence="70"/>
+
+    <!-- Submenus for 01. Auth, Multi-Tenancy & RBAC -->
+    <menuitem id="menu_hotel_auth_users"
+              name="Staff Users &amp; Roles"
+              parent="menu_hotel_auth_root"
+              action="base.action_res_users"
+              sequence="10"/>
+
+    <menuitem id="menu_hotel_auth_companies"
+              name="Multi-Property Companies"
+              parent="menu_hotel_auth_root"
+              action="base.action_res_company_form"
+              sequence="20"/>
+
+    <menuitem id="menu_hotel_auth_groups"
+              name="Access Control Groups (RBAC)"
+              parent="menu_hotel_auth_root"
+              action="base.action_res_groups"
+              sequence="30"/>
+</odoo>

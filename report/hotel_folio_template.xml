@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_hotel_folio_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: Arial, sans-serif;">
+                        <!-- Header Details -->
+                        <div class="row mb-4 pb-2 border-bottom">
+                            <div class="col-6">
+                                <h2 class="text-primary font-weight-bold">GUEST FOLIO / STATEMENT</h2>
+                                <p class="text-muted mb-0">Folio Number: <strong t-field="doc.name"/></p>
+                                <p class="text-muted mb-0">Date: <span t-esc="datetime.date.today()"/></p>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h4><strong t-field="doc.company_id.name"/></h4>
+                                <div t-field="doc.company_id.partner_id" t-options='{"widget": "contact", "fields": ["address", "phone", "email"], "no_marker": True}'/>
+                            </div>
+                        </div>
+
+                        <!-- Guest & Stay Metadata -->
+                        <div class="row mb-4 p-3 bg-light rounded">
+                            <div class="col-6">
+                                <strong>Guest Name:</strong> <span t-field="doc.partner_id.name"/><br/>
+                                <strong>Contact Email:</strong> <span t-field="doc.partner_id.email"/><br/>
+                                <strong>Phone:</strong> <span t-field="doc.partner_id.phone"/><br/>
+                                <strong>ID / Passport:</strong> <span t-field="doc.partner_id.id_number"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Assigned Room:</strong> <span t-field="doc.room_id.name"/><br/>
+                                <strong>Booking Ref:</strong> <span t-field="doc.reservation_id.name"/><br/>
+                                <strong>Arrival:</strong> <span t-field="doc.reservation_id.checkin_date"/><br/>
+                                <strong>Departure:</strong> <span t-field="doc.reservation_id.checkout_date"/>
+                            </div>
+                        </div>
+
+                        <!-- Itemized Charges -->
+                        <h4 class="text-secondary border-bottom pb-1">Itemized Folio Charges</h4>
+                        <table class="table table-sm table-striped mb-4">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="text-end">Unit Price</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.line_ids" t-as="line">
+                                    <td><span t-field="line.date"/></td>
+                                    <td><span t-field="line.charge_type"/></td>
+                                    <td><span t-field="line.name"/></td>
+                                    <td class="text-center"><span t-field="line.quantity"/></td>
+                                    <td class="text-end"><span t-field="line.unit_price" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    <td class="text-end"><span t-field="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Payments Table -->
+                        <t t-if="doc.payment_ids">
+                            <h4 class="text-secondary border-bottom pb-1">Payments &amp; Deposits Received</h4>
+                            <table class="table table-sm table-bordered mb-4">
+                                <thead>
+                                    <tr>
+                                        <th>Payment Date</th>
+                                        <th>Method</th>
+                                        <th>Reference Slip / Auth</th>
+                                        <th class="text-end">Paid Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.payment_ids" t-as="payment">
+                                        <td><span t-field="payment.payment_date"/></td>
+                                        <td><span t-field="payment.payment_method"/></td>
+                                        <td><span t-field="payment.reference"/></td>
+                                        <td class="text-end"><span t-field="payment.amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- Totals Summary -->
+                        <div class="row justify-content-end mb-5">
+                            <div class="col-5">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Total Charges:</strong></td>
+                                        <td class="text-end"><span t-field="doc.total_charges" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Total Paid:</strong></td>
+                                        <td class="text-end"><span t-field="doc.total_payments" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                    <tr class="table-active">
+                                        <td><h4><strong>Net Balance Due:</strong></h4></td>
+                                        <td class="text-end"><h4><strong t-field="doc.balance_due" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></h4></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Signatures -->
+                        <div class="row pt-5 mt-5">
+                            <div class="col-6 text-center">
+                                <div style="border-top: 1px solid #333; width: 80%; margin: 0 auto; padding-top: 5px;">
+                                    <strong>Guest Signature</strong>
+                                </div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div style="border-top: 1px solid #333; width: 80%; margin: 0 auto; padding-top: 5px;">
+                                    <strong>Front Desk Cashier / Auditor</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

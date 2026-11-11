@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Executive KPI Dashboard Form -->
+    <record id="view_hotel_kpi_dashboard_form" model="ir.ui.view">
+        <field name="name">hotel.kpi.dashboard.form</field>
+        <field name="model">hotel.kpi.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Hospitality Executive Dashboard">
+                <sheet>
+                    <div class="row text-center mb-4">
+                        <div class="col-12">
+                            <h2 class="text-primary font-weight-bold">
+                                <i class="fa fa-hotel me-2"/> Axum Grand Hotel — Executive Performance Dashboard
+                            </h2>
+                            <p class="text-muted">Real-Time Operational &amp; Hospitality Yield Metrics</p>
+                        </div>
+                    </div>
+
+                    <!-- Core Yield KPIs Row -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm bg-primary text-white p-3 rounded">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-white-50 text-uppercase mb-1">Occupancy Rate</h6>
+                                        <h2 class="mb-0 font-weight-bold"><field name="occupancy_rate"/>%</h2>
+                                    </div>
+                                    <i class="fa fa-percent fa-2x opacity-50"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm bg-success text-white p-3 rounded">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-white-50 text-uppercase mb-1">ADR (Avg Daily Rate)</h6>
+                                        <h2 class="mb-0 font-weight-bold"><field name="adr"/></h2>
+                                    </div>
+                                    <i class="fa fa-line-chart fa-2x opacity-50"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm bg-info text-white p-3 rounded">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-white-50 text-uppercase mb-1">RevPAR</h6>
+                                        <h2 class="mb-0 font-weight-bold"><field name="revpar"/></h2>
+                                    </div>
+                                    <i class="fa fa-bar-chart fa-2x opacity-50"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm bg-dark text-white p-3 rounded">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-white-50 text-uppercase mb-1">Total Revenue Today</h6>
+                                        <h2 class="mb-0 font-weight-bold"><field name="total_daily_revenue"/></h2>
+                                    </div>
+                                    <i class="fa fa-money fa-2x opacity-50"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Room Inventory & Operational Distribution -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="card shadow-sm p-3 h-100 border">
+                                <h5 class="card-title text-secondary border-bottom pb-2 mb-3">
+                                    <i class="fa fa-bed me-2"/> Room Inventory Distribution
+                                </h5>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="p-2 border rounded bg-light">
+                                            <small class="text-muted d-block">Total Rooms</small>
+                                            <span class="h4 font-weight-bold text-dark"><field name="total_rooms"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="p-2 border rounded bg-light">
+                                            <small class="text-muted d-block">Occupied</small>
+                                            <span class="h4 font-weight-bold text-primary"><field name="occupied_rooms"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="p-2 border rounded bg-light">
+                                            <small class="text-muted d-block">Available Ready</small>
+                                            <span class="h4 font-weight-bold text-success"><field name="available_rooms"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row text-center mt-3">
+                                    <div class="col-6">
+                                        <div class="p-2 border rounded bg-light">
+                                            <small class="text-muted d-block">Vacant Dirty (Housekeeping)</small>
+                                            <span class="h4 font-weight-bold text-danger"><field name="dirty_rooms"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-2 border rounded bg-light">
+                                            <small class="text-muted d-block">Maintenance / Out-of-Order</small>
+                                            <span class="h4 font-weight-bold text-warning"><field name="maintenance_rooms"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card shadow-sm p-3 h-100 border">
+                                <h5 class="card-title text-secondary border-bottom pb-2 mb-3">
+                                    <i class="fa fa-tasks me-2"/> Today's Operations
+                                </h5>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="p-2 border rounded bg-light">
+                                            <small class="text-muted d-block">Expected Arrivals</small>
+                                            <span class="h4 font-weight-bold text-info"><field name="today_arrivals"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="p-2 border rounded bg-light">
+                                            <small class="text-muted d-block">Expected Departures</small>
+                                            <span class="h4 font-weight-bold text-secondary"><field name="today_departures"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="p-2 border rounded bg-light">
+                                            <small class="text-muted d-block">VIP Guests In-House</small>
+                                            <span class="h4 font-weight-bold text-warning"><field name="inhouse_vip_count"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row text-center mt-3">
+                                    <div class="col-6">
+                                        <div class="p-2 border rounded bg-light">
+                                            <small class="text-muted d-block">Pending Housekeeping Tasks</small>
+                                            <span class="h4 font-weight-bold text-danger"><field name="pending_hk_tasks"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-2 border rounded bg-light">
+                                            <small class="text-muted d-block">Active Maintenance Work Orders</small>
+                                            <span class="h4 font-weight-bold text-warning"><field name="open_maintenance_tickets"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <group invisible="1">
+                        <field name="currency_id"/>
+                        <field name="company_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Dashboard -->
+    <record id="action_hotel_kpi_dashboard" model="ir.actions.act_window">
+        <field name="name">Executive Dashboard</field>
+        <field name="res_model">hotel.kpi.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="res_id" ref="hotel_pms.default_hotel_kpi_dashboard"/>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_hotel_reporting_dashboard"
+              name="Hospitality KPI Analytics"
+              parent="menu_hotel_reporting_root"
+              action="action_hotel_kpi_dashboard"
+              sequence="10"/>
+</odoo>

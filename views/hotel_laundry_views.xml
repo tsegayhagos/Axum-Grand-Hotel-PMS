@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Laundry Order Tree View -->
+    <record id="view_hotel_laundry_order_tree" model="ir.ui.view">
+        <field name="name">hotel.laundry.order.list</field>
+        <field name="model">hotel.laundry.order</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'cancelled'"
+                  decoration-info="state in ('received', 'processing')"
+                  decoration-warning="state == 'ready'"
+                  decoration-success="state in ('delivered', 'posted')">
+                <field name="name"/>
+                <field name="room_id"/>
+                <field name="partner_id"/>
+                <field name="order_date"/>
+                <field name="speed" widget="badge"/>
+                <field name="total_pieces"/>
+                <field name="total_amount"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Laundry Order Form View -->
+    <record id="view_hotel_laundry_order_form" model="ir.ui.view">
+        <field name="name">hotel.laundry.order.form</field>
+        <field name="model">hotel.laundry.order</field>
+        <field name="arch" type="xml">
+            <form string="Guest Laundry Order">
+                <header>
+                    <button name="action_confirm_received" string="Tag &amp; Receive" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_start_processing" string="Start Processing" type="object" class="btn-info" invisible="state != 'received'"/>
+                    <button name="action_mark_ready" string="Mark Ready" type="object" class="btn-warning" invisible="state != 'processing'"/>
+                    <button name="action_mark_delivered" string="Deliver to Room" type="object" class="btn-success" invisible="state != 'ready'"/>
+                    <button name="action_post_to_guest_folio" string="Charge to Folio" type="object" class="btn-primary" invisible="state != 'delivered'"/>
+                    <button name="action_cancel" string="Cancel Order" type="object" invisible="state in ('posted', 'cancelled')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,received,processing,ready,delivered,posted"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Order Ticket"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Guest Stay &amp; Room">
+                            <field name="reservation_id" domain="[('state', '=', 'checkin')]"/>
+                            <field name="room_id"/>
+                            <field name="partner_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Service Logistics">
+                            <field name="speed"/>
+                            <field name="provider_type"/>
+                            <field name="vendor_id" invisible="provider_type != 'external_vendor'"/>
+                            <field name="order_date"/>
+                            <field name="expected_delivery"/>
+                            <field name="actual_delivery" readonly="1" invisible="not actual_delivery"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Garments &amp; Items">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="service_id"/>
+                                    <field name="barcode_tag" placeholder="Tag #"/>
+                                    <field name="quantity"/>
+                                    <field name="unit_price"/>
+                                    <field name="price_subtotal"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="subtotal"/>
+                                <field name="express_surcharge" invisible="speed != 'express'"/>
+                                <field name="total_amount" class="oe_subtotal_footer_separator font-weight-bold"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </page>
+                        <page string="Care Notes &amp; Folio Link">
+                            <group>
+                                <field name="folio_line_id" readonly="1" invisible="not folio_line_id"/>
+                            </group>
+                            <field name="notes" placeholder="Stain locations, special washing temperature instructions..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Laundry Service Catalog View -->
+    <record id="view_hotel_laundry_service_tree" model="ir.ui.view">
+        <field name="name">hotel.laundry.service.list</field>
+        <field name="model">hotel.laundry.service</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="service_type"/>
+                <field name="standard_price"/>
+                <field name="express_price"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hotel_laundry_service_form" model="ir.ui.view">
+        <field name="name">hotel.laundry.service.form</field>
+        <field name="model">hotel.laundry.service</field>
+        <field name="arch" type="xml">
+            <form string="Laundry Service Item">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Garment / Item Name"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="category"/>
+                            <field name="service_type"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="standard_price"/>
+                            <field name="express_price"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Item handling notes..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions & Menus -->
+    <record id="action_hotel_laundry_order" model="ir.actions.act_window">
+        <field name="name">Guest Laundry Orders</field>
+        <field name="res_model">hotel.laundry.order</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_hotel_laundry_service" model="ir.actions.act_window">
+        <field name="name">Laundry Price List &amp; Services</field>
+        <field name="res_model">hotel.laundry.service</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_hotel_laundry_orders"
+              name="Laundry Orders"
+              parent="menu_hotel_laundry_root"
+              action="action_hotel_laundry_order"
+              sequence="10"/>
+
+    <menuitem id="menu_hotel_laundry_services"
+              name="Laundry Services Catalog"
+              parent="menu_hotel_laundry_root"
+              action="action_hotel_laundry_service"
+              sequence="20"/>
+</odoo>

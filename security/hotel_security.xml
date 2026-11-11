@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.module.category" id="module_category_hotel_pms">
+        <field name="name">Hotel PMS</field>
+        <field name="description">Hospitality &amp; Property Management System Security</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <!-- Base User / Front Desk -->
+    <record id="group_hotel_user" model="res.groups">
+        <field name="name">Front Desk Receptionist</field>
+        <field name="category_id" ref="module_category_hotel_pms"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Housekeeping Attendant -->
+    <record id="group_hotel_housekeeping" model="res.groups">
+        <field name="name">Housekeeping Attendant</field>
+        <field name="category_id" ref="module_category_hotel_pms"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Housekeeping Supervisor -->
+    <record id="group_hotel_housekeeping_supervisor" model="res.groups">
+        <field name="name">Housekeeping Supervisor</field>
+        <field name="category_id" ref="module_category_hotel_pms"/>
+        <field name="implied_ids" eval="[(4, ref('group_hotel_housekeeping'))]"/>
+    </record>
+
+    <!-- Laundry Staff -->
+    <record id="group_hotel_laundry" model="res.groups">
+        <field name="name">Laundry Staff</field>
+        <field name="category_id" ref="module_category_hotel_pms"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Maintenance Staff -->
+    <record id="group_hotel_maintenance" model="res.groups">
+        <field name="name">Maintenance Technician</field>
+        <field name="category_id" ref="module_category_hotel_pms"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Night Auditor -->
+    <record id="group_hotel_night_auditor" model="res.groups">
+        <field name="name">Night Auditor</field>
+        <field name="category_id" ref="module_category_hotel_pms"/>
+        <field name="implied_ids" eval="[(4, ref('group_hotel_user'))]"/>
+    </record>
+
+    <!-- General Manager -->
+    <record id="group_hotel_manager" model="res.groups">
+        <field name="name">Hotel General Manager</field>
+        <field name="category_id" ref="module_category_hotel_pms"/>
+        <field name="implied_ids" eval="[
+            (4, ref('group_hotel_user')),
+            (4, ref('group_hotel_housekeeping_supervisor')),
+            (4, ref('group_hotel_laundry')),
+            (4, ref('group_hotel_maintenance')),
+            (4, ref('group_hotel_night_auditor'))
+        ]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Multi-Company Record Rules -->
+    <data noupdate="1">
+        <record id="hotel_room_comp_rule" model="ir.rule">
+            <field name="name">Hotel Room Multi-Company</field>
+            <field name="model_id" ref="model_hotel_room"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="hotel_reservation_comp_rule" model="ir.rule">
+            <field name="name">Hotel Reservation Multi-Company</field>
+            <field name="model_id" ref="model_hotel_reservation"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="hotel_folio_comp_rule" model="ir.rule">
+            <field name="name">Hotel Folio Multi-Company</field>
+            <field name="model_id" ref="model_hotel_folio"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="hotel_laundry_comp_rule" model="ir.rule">
+            <field name="name">Hotel Laundry Order Multi-Company</field>
+            <field name="model_id" ref="model_hotel_laundry_order"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="hotel_housekeeping_comp_rule" model="ir.rule">
+            <field name="name">Hotel Housekeeping Multi-Company</field>
+            <field name="model_id" ref="model_hotel_housekeeping_task"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="hotel_maintenance_comp_rule" model="ir.rule">
+            <field name="name">Hotel Maintenance Multi-Company</field>
+            <field name="model_id" ref="model_hotel_maintenance_request"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="hotel_night_audit_comp_rule" model="ir.rule">
+            <field name="name">Hotel Night Audit Multi-Company</field>
+            <field name="model_id" ref="model_hotel_night_audit"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+    </data>
+</odoo>

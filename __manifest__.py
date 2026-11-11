@@ -20,7 +20,7 @@ Comprehensive Enterprise Hospitality & Property Management Platform for Axum Gra
 Contact: tsegayhagos1942@gmail.com | +251914387813 | Addis Ababa, Ethiopia
     """,
     'author': 'Tsegay Hagos',
-    'website': 'https://github.com',
+    'website': 'https://github.com/tsegayhagos/axum-grand-hotel-pms',
     'depends': [
         'base',
         'mail',
